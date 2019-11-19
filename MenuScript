@@ -1,0 +1,12 @@
+[Header:"GameObjects"]
+public Scene loadedScene;
+public Canvas loadedCanvas;
+
+
+public void quitToAnotherScene()
+{
+// FUNZIONERA'? PROVARE
+  if (loadedScene == null ){
+    Application.Quit(); 
+  }
+}
