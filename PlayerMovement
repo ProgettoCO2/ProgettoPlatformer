@@ -38,6 +38,7 @@ public void walk(float x)
   }
 }
 
+
 public void jump(y)
 {
   if(//controllo con il raycast e il layer)
