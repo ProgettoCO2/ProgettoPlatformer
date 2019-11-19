@@ -1,12 +1,16 @@
-[Header:"GameObjects"]
-public Scene loadedScene;
-public Canvas loadedCanvas;
 
-
-public void quitToAnotherScene()
+public void quitToAnotherScene(string loadedScene)
 {
-// FUNZIONERA'? PROVARE
-  if (loadedScene == null ){
+  if (loadedScene.equals("NULL"){
     Application.Quit(); 
   }
+  else {
+    LoadScene(loadedScene);
+  }
 }
+
+//usare solo un canvas con argomento? SI, il parametro può essere passato da inspector dice il web
+public void loadedCanvas(Canvas canvasSelected){
+  canvasSelected.setActive(true);
+}
+
