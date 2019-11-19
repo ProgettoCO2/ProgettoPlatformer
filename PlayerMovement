@@ -1,0 +1,68 @@
+[Header : "Components"]
+public RigidBody2D player;
+public Layer ground;
+public Animator playerAnimator;
+
+[Header : "Parameters"]
+public float speed;
+public float maxSpeed;
+public float jumpForce;
+
+private float x, y;
+
+public void Update()
+{
+  x = Input.getAxis("Horizontal");
+  y = Input.getAxis("Vertical");
+  
+  walk(x);
+  jump(y);
+  
+  setAnimation();  
+}
+
+public void walk(float x)
+{
+  if(Math.abs(player.velocity.x) < maxSpeed)
+  {
+    player.addForce(new Vector2(speed*x, 0)) // speed moltiplicato per x perchè vorrei che in base a quanto si preme l'analogico cambi la velocità
+  }
+  
+  if(player.velocity.x < 0)
+  {
+  player.eulerAngle = new Vector3(0, 180, 0); // QUESTO DIPENDE DA COME E' ORIENTATA LA SPRITE IN ORIGINE
+  } 
+  else 
+  {
+    player.eulerAngle = new Vector3(0, 0, 0);
+  }
+}
+
+public void jump(y)
+{
+  if(//controllo con il raycast e il layer)
+  {
+    player.addForce(0, jumpForce);
+  }
+}
+
+public void setAnimation() //BISOGNA CAPIRE SE e' MEGLIO GESTIRE DA QUI O DA ANIMATOR DIRETTAMENTE, DA PROVARE DOVE E' PIU' EFFICENTE
+{
+  float hSpeed = Math.abs(player.velocity.x);
+  float vSpeed = Math.abs(player.velocity.y);
+  if( hSpeed > 0 && vSpeed == 0)
+  {
+    playerAnimator.setBool("Walking", true)
+    playerAnimator.setBool("Jumping", false)
+  }
+  else if (vSpeed > 0)
+  { 
+    playerAnimator.setBool("Jumping", true)
+    playerAnimator.setBool("Walking", false)   
+  }
+  else
+  {
+    playerAnimator.setBool("Jumping", false)
+    playerAnimator.setBool("Walking", false)  
+  }
+}
