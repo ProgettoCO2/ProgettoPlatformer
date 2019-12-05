@@ -1,0 +1,50 @@
+using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace Assets.Scripts
+{
+    public static class DataSaver
+    {
+        public static void saveData(ObjectData data, string path)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            FileStream fs = new FileStream(path, FileMode.Create);
+            fs.Position = 0;
+
+            formatter.Serialize(fs, data);
+            fs.Close();
+        }
+
+        public static ObjectData loadData(string path)
+        {
+            if (File.Exists(path))
+            {
+
+                BinaryFormatter formatter = new BinaryFormatter();
+
+                FileStream fs = File.OpenRead(path); //new FileStream(path, FileMode.Open);
+                fs.Position = 0;
+                // ritraduciamo i dati, bisogna castare il risultato per fargli capire il tipo di dati
+                ObjectData data = (ObjectData)formatter.Deserialize(fs) ;
+                
+                fs.Close(); //!!!!!!!!!!!!!!!!!!!!chiudi sempre il file stream
+
+                return data;
+
+            }
+            else
+            {
+                //qui da mettere debug della non esistenza del file
+                return null;
+            }
+        }
+
+    }
+}
