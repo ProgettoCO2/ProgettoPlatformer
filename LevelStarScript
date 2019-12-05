@@ -1,0 +1,28 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+namespace Assets.Scripts
+{
+    public class LevelStarScript : MonoBehaviour
+    {
+        // Start is called before the first frame update
+        void Start()
+        {
+            Text a = GetComponent<Text>();
+            string path = Application.persistentDataPath + "/" + a.text + ".fic";
+            try
+            {
+                ObjectData data = DataSaver.loadData(path);
+                a.text = data.starCount().ToString();
+            }
+            catch (Exception err)
+            {
+                a.text = "0";
+            }          
+        }
+    }
+}
