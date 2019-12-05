@@ -1,0 +1,43 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class CheckpointScript : MonoBehaviour
+{
+    [Header("Components")]
+    public Text x;
+    public Text y;
+    public Text score;
+    public GameObject thisg;
+    public GameObject ball;
+
+    void OnTriggerEnter(Collider other) {
+        //quando viene triggerato il collider del checkpoint vengono salvate nelle due textbox la x e la y così da poter essere richiamate in seguito per un respawn 
+        //respawn fake perchè in verita spostiamo solo la palla
+        x.text = thisg.transform.position.x.ToString();
+        y.text = thisg.transform.position.y.ToString();
+        thisg.GetComponent<SpriteRenderer>().color = Color.green;
+    }
+
+    public void respawnWithScore(Canvas deascreen)
+    {
+        if (Convert.ToDouble(score.text.Substring(8)) != 0 && x.text != null && y.text != null)
+        {
+            //se lo score è maggiore di zero abbiamo la possibilità di respawn, inserire un parametro per mettere un numero di gold necessari per respawnare?
+            score.text = "Score :  0";
+
+            ball.transform.position = new Vector3(float.Parse(x.text), float.Parse(y.text), 0); 
+
+            Time.timeScale = 1;
+
+            ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+            deascreen.gameObject.SetActive(false);
+        }
+
+    }
+
+}
