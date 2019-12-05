@@ -1,0 +1,70 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+
+namespace Assets.Scripts
+{
+    public class EndDoorScript : MonoBehaviour
+    {
+        [Header("Components")]
+        public GameObject thisg;
+        public Text golddiscovered;
+        public Text scoretext;
+        public Text timetext;
+
+        [Header("Parameters")]
+        public float scoreonestar;
+        public float timeonestar;
+        public string scenedataname;
+
+        private string path;
+
+        void Start()
+        {
+            path = Application.persistentDataPath + "/" + scenedataname + ".fic";
+        }
+        void OnTriggerEnter(Collider other)
+        {
+            bool discovered = (golddiscovered.text == "1" ? true : false);
+            bool score = float.Parse(scoretext.text.Substring(8)) == scoreonestar ? true : false;
+            bool time = float.Parse(timetext.text.Substring(8)) < timeonestar ? true : false;
+            ObjectData newdata = new ObjectData(score, time, discovered);
+            //salvataggio dei dati prendendo score e tempo! Le stelle vengono assegnate in questo modo :
+            //- Score Raggiunto
+            //- Tempo non superato
+            //- Moneta nascota trovata
+
+
+            saveData(newdata);
+
+
+            MenuScript m = new MenuScript();
+            m.ExitToGenericScene("MainMenu");
+
+        }
+
+        private void saveData(ObjectData newdata)
+        {
+            ObjectData olddata = DataSaver.loadData(path);
+            if (olddata == null)
+            {
+                olddata = new ObjectData(newdata.stellascore, newdata.stellatime, newdata.stelladiscovered);
+                DataSaver.saveData(olddata, path);
+            }
+            else
+            {
+                int olddatastar = olddata.starCount();
+                int newdatastar = newdata.starCount();
+
+                if (newdatastar > olddatastar)
+                {
+                    DataSaver.saveData(newdata, path);
+                }
+            }
+
+        }
+    }
+}
