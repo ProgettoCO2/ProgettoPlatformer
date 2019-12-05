@@ -1,69 +1,81 @@
-[Header : "Components"]
-public RigidBody2D player;
-public Layer ground;
-public Animator playerAnimator;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-[Header : "Parameters"]
-public float speed;
-public float maxSpeed;
-public float jumpForce;
-
-private float x, y;
-
-public void Update()
+public class BallMovement : MonoBehaviour
 {
-  x = Input.getAxis("Horizontal");
-  y = Input.getAxis("Vertical");
-  
-  walk(x);
-  jump(y);
-  
-  setAnimation();  
-}
+    [Header ("Components")]
+    public Rigidbody ball;
+    public  Camera camera; 
+    public LayerMask ground;
 
-public void walk(float x)
-{
-  if(Math.abs(player.velocity.x) < maxSpeed)
-  {
-    player.addForce(new Vector2(speed*x, 0)) // speed moltiplicato per x perchè vorrei che in base a quanto si preme l'analogico cambi la velocità
-  }
-  
-  if(player.velocity.x < 0)
-  {
-  player.eulerAngle = new Vector3(0, 180, 0); // QUESTO DIPENDE DA COME E' ORIENTATA LA SPRITE IN ORIGINE
-  } 
-  else 
-  {
-    player.eulerAngle = new Vector3(0, 0, 0);
-  }
-}
+    [Header("Parameters")]
+    public float speed;
+    public float maxspeed;
+    public float jumpforce;
+
+    private float deltajumptime = 0;
+
+    void Start()
+    {
+        Time.timeScale = 1;
+    }
+    void Update()
+    {
+        //variabile che contiene il tempo passato dall'ultimo salto
+        deltajumptime++;
+        //aggiorna la posizione della camera
+        camera.transform.position = new Vector3(ball.position.x, ball.position.y, camera.transform.position.z);
+
+        float x = Input.GetAxis("Horizontal");
+        float y = Input.GetAxis("Vertical");
+
+        //controllo del drag, nel caso ci sia una discesa molto ripida e la ball prenda troppa velocità
+        //aumento il drag quando la velocità e superiore alla maxspeed, in questo modo è più contrabbile in quelle circostanze
+        if (ball.velocity.x >  maxspeed)
+        {
+            ball.drag = 1;
+        }
+        else
+        {
+            ball.drag = 0;
+        }
+
+        // il delta jump è per evitare che salti due volte contemporaneamente e generi un salto con doppia potenza, in questo modo è concesso entrare nel metodo solo una volta ogni 15 frame
+        if (y > 0 && deltajumptime > 50) 
+        {        
+            //controllo che sotto o ai lati ci sia una superfice
+            if ( Physics.Raycast(ball.transform.position, -Vector3.up, 0.51f, ground) || 
+                 Physics.Raycast(ball.transform.position, new Vector3(-1, -1, 0), 0.51f, ground)|| 
+                 Physics.Raycast(ball.transform.position, new Vector3(1, -1, 0), 0.51f, ground) || 
+                 Physics.Raycast(ball.transform.position, new Vector3(1.732f, -1, 0), 0.6f, ground)|| 
+                 Physics.Raycast(ball.transform.position, new Vector3(-1.732f, -1, 0), 0.6f, ground))
+            {
+                deltajumptime = 0;
+                ball.AddForce(new Vector3(0, jumpforce, 0));
+            }
+        }
+
+        //questo if gestisce il movimento, che è dato dalla speed per quanto stiamo premendo il tasto (per esempio con un analogico)
+        if(!(System.Math.Abs(ball.velocity.x) > maxspeed))
+        {
+            //i primi due if verificano se si è contro un muro, se si la palla scala il muro, questo accade solo con muri completamente verticali e con layer ground
+            if (Physics.Raycast(ball.transform.position, Vector3.left, 0.52f, ground) && x < 0 && System.Math.Abs(ball.velocity.y) < maxspeed - 1)
+            {
+                ball.AddForce(new Vector3(0, -x * speed, 0));
+            }
+            else if (Physics.Raycast(ball.transform.position, Vector3.right, 0.51f, ground) && x > 0 && System.Math.Abs(ball.velocity.y) < maxspeed - 1)
+            {
+                ball.AddForce(new Vector3(0, x * speed, 0));
+            }
+            //qui invece assegna semplicemente il movimento orrizontale nel caso non si verifichino gli if precedenti
+            else {
+                ball.AddForce(new Vector3(x * speed, 0, 0));
+            }
+
+        }
 
 
-public void jump(y)
-{
-  if(//controllo con il raycast e il layer)
-  {
-    player.addForce(0, jumpForce);
-  }
-}
+    }
 
-public void setAnimation() //BISOGNA CAPIRE SE e' MEGLIO GESTIRE DA QUI O DA ANIMATOR DIRETTAMENTE, DA PROVARE DOVE E' PIU' EFFICENTE
-{
-  float hSpeed = Math.abs(player.velocity.x);
-  float vSpeed = Math.abs(player.velocity.y);
-  if( hSpeed > 0 && vSpeed == 0)
-  {
-    playerAnimator.setBool("Walking", true)
-    playerAnimator.setBool("Jumping", false)
-  }
-  else if (vSpeed > 0)
-  { 
-    playerAnimator.setBool("Jumping", true)
-    playerAnimator.setBool("Walking", false)   
-  }
-  else
-  {
-    playerAnimator.setBool("Jumping", false)
-    playerAnimator.setBool("Walking", false)  
-  }
 }
