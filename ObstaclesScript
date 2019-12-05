@@ -1,0 +1,69 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ObstaclesScript : MonoBehaviour
+{
+    [Header("Components")]
+    public GameObject obstacles;
+    public GameObject ball;
+    public Canvas deadscreen;
+
+    [Header("Parameters")]
+    public float movement;
+    public float speedC;
+    public float returnspeed;
+    public float startposition;
+    public bool ismoving;
+    public float stamp;
+
+    private float originy;
+    private float speed;
+    private bool isitout;
+    private void Start()
+    {
+        originy = obstacles.transform.position.y;
+        obstacles.transform.Translate(0, startposition, 0);
+        isitout = true;
+        speed = speedC;
+    }
+
+    private void Update()
+    {
+        if (ismoving && Time.timeScale != 0)
+        {
+
+            stamp = originy - obstacles.transform.position.y;
+
+            //se non ha ancora completato il movimento muove l'ostacolo, else cambia direzione e setta una nuova origine,
+            //la velocità e la posizione di movimento iniziale sono settabili da public
+            if (Math.Abs(Math.Round(originy, 2) - Math.Round(obstacles.transform.position.y, 2)) < movement)
+            {
+                obstacles.transform.Translate(0, -speed, 0);
+            }
+            else
+            {
+                if (isitout)
+                {
+                    isitout = false;
+                    speed = -returnspeed;
+                }
+                else
+                {
+                    isitout = true;
+                    speed = speedC;
+                }
+                originy = obstacles.transform.position.y;
+            }
+        }
+
+
+    }
+    void OnCollisionEnter(Collision collision)
+    {
+            deadscreen.gameObject.SetActive(true);
+            Time.timeScale = 0;
+    }
+}
