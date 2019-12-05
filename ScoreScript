@@ -1,0 +1,45 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class scoreScript : MonoBehaviour
+{
+    [Header ("Components")]
+    public Text score;
+    public Text time;
+    public Text mistergold;
+    public GameObject thisgold;
+
+    [Header ("Parameters")]
+    public bool isthistimer = false;
+    public bool isthismistergold = false;
+    public double timepassed = 0;
+    public float gold = 1;
+
+    void Update()
+    {
+        if (isthistimer && Time.timeScale != 0)
+        { 
+            timepassed += 0.02;
+            timepassed = Math.Round(timepassed, 2);
+            time.text = "Time  : " + timepassed.ToString();
+        }
+      
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        double actualscore = Convert.ToDouble(score.text.Substring(8));
+        actualscore += gold;
+        score.text = "Score : " + actualscore.ToString();
+        if (isthismistergold)
+        {
+            mistergold.text = 1.ToString();
+        }
+        Destroy(thisgold);
+    }
+
+
+}
