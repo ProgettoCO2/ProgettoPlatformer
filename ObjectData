@@ -1,0 +1,45 @@
+using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+    
+namespace Assets.Scripts
+{
+[System.Serializable]
+    public class ObjectData
+    {
+        public bool stellascore = false;
+        public bool stellatime = false;
+        public bool stelladiscovered = false;
+        public ObjectData(bool x, bool y, bool z)
+        {
+            stellascore = x;
+            stellatime = y;
+            stelladiscovered = z;
+        }
+        public ObjectData(ObjectData data)
+        {
+            stellascore = data.stellascore;
+            stellatime = data.stellatime;
+            stelladiscovered = data.stelladiscovered;
+        }
+        public ObjectData()
+        { }
+
+        public int starCount()
+        {
+            int star = 0;
+            if (stelladiscovered)
+                star++;
+            if (stellatime)
+                star++;
+            if (stellascore)
+                star++;
+
+            return star;
+
+        }
+    }
+}
