@@ -1,16 +1,34 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public void quitToAnotherScene(string loadedScene)
+public class MenuScript : MonoBehaviour
 {
-  if (loadedScene.equals("NULL"){
-    Application.Quit(); 
-  }
-  else {
-    LoadScene(loadedScene);
-  }
-}
+    public void ExitToGenericScene(string scenename)
+    {
+        if (scenename != "")
+        {
+            SceneManager.LoadScene(scenename);
+        }
+        else
+        {
+            Application.Quit();
+        }
+    }
 
-//usare solo un canvas con argomento? SI, il parametro può essere passato da inspector dice il web
-public void loadedCanvas(Canvas canvasSelected){
-  canvasSelected.setActive(true);
+    public void activeCanvas(Canvas canvas)
+    {
+        if (canvas.gameObject.activeSelf)
+        {
+            canvas.gameObject.SetActive(false);
+            Time.timeScale = 1;
+        }
+        else
+        {
+            canvas.gameObject.SetActive(true);
+            Time.timeScale = 0;
+        }
+    }
+	
 }
-
